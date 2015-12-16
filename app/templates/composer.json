@@ -1,0 +1,11 @@
+{
+  "require": {
+    "drush/drush": "DRUSH_VERSION"
+  },
+  "authors": [
+    {
+      "name": "ActiveLAMP",
+      "email": "info@activelamp.com"
+    }
+  ]
+}

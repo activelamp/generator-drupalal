@@ -1,0 +1,98 @@
+# BUILD ALL WITH:
+# vagrant up --no-parallel
+require 'fileutils'
+
+MYSQL_ROOT_PASSWORD="root"
+
+unless File.exists?("keys")
+  Dir.mkdir("keys")
+  ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+  File.open("keys/id_rsa.pub", 'w') { |file| file.write(ssh_pub_key) }
+end
+
+unless File.exists?("Dockerfiles/jenkins/keys")
+  Dir.mkdir("Dockerfiles/jenkins/keys")
+  FileUtils.copy("#{Dir.home}/.ssh/id_rsa", "Dockerfiles/jenkins/keys/id_rsa")
+end
+
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "mysql" do |v|
+
+    v.vm.provider "docker" do |d|
+      d.vagrant_machine = "APP-NAME-dockerhost"
+      d.vagrant_vagrantfile = "./host/Vagrantfile"
+      d.image = "mysql:5.7.9"
+      d.env = { :MYSQL_ROOT_PASSWORD => MYSQL_ROOT_PASSWORD }
+      d.name = "mysql-container"
+      d.remains_running = true
+      d.ports = [
+          "3306:3306"
+      ]
+    end
+  end
+
+  #config.vm.define "jenkins" do |v|
+  #
+  #  v.vm.synced_folder ".", "/srv", type: "rsync",
+  #      rsync__exclude: get_ignored_files(),
+  #      rsync__args: ["--verbose", "--archive", "--delete", "--copy-links"]
+  #
+  #  v.vm.provider "docker" do |d|
+  #    d.vagrant_machine = "APP-NAME-dockerhost"
+  #    d.vagrant_vagrantfile = "./host/Vagrantfile"
+  #    d.build_dir = "./Dockerfiles/jenkins"
+  #    d.name = "jenkins-container"
+  #    # Save the Composer cache for all containers.
+  #    d.volumes = [
+  #        "/home/rancher/.composer:/root/.composer",
+  #        "/home/rancher/.drush:/root/.drush"
+  #    ]
+  #    d.remains_running = true
+  #    d.ports = [
+  #        "8080:8080"
+  #    ]
+  #  end
+  #end
+
+  config.vm.define "drupal" do |v|
+
+    v.vm.synced_folder ".", "/srv/app", type: "rsync",
+        rsync__exclude: get_ignored_files(),
+        rsync__args: ["--verbose", "--archive", "--delete", "--copy-links"],
+        rsync__chown: false
+
+    v.vm.provider "docker" do |d|
+      d.vagrant_machine = "APP-NAME-dockerhost"
+      d.vagrant_vagrantfile = "./host/Vagrantfile"
+      d.build_dir = "."
+      d.name = "drupal-container"
+      d.remains_running = true
+      # Save the Composer cache for all containers.
+      d.volumes = [
+          "/home/rancher/.composer:/root/.composer",
+          "/home/rancher/.drush:/root/.drush"
+      ]
+      d.ports = [
+          "80:80",
+          "2222:22"
+      ]
+      d.link("mysql-container:mysql")
+    end
+  end
+
+end
+
+def get_ignored_files()
+  ignore_file   = ".rsyncignore"
+  ignore_array  = []
+
+  if File.exists? ignore_file and File.readable? ignore_file
+    File.read(ignore_file).each_line do |line|
+      ignore_array << line.chomp
+    end
+  end
+
+  ignore_array
+end

@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define "APP-NAME-dockerhost", primary: true do |dhost|
+
+  dhost.vm.box = "ailispaw/rancheros-lite"
+  dhost.vm.network :private_network, ip: "192.168.100.252"
+  dhost.vm.hostname = "DEV_URL"
+  dhost.vm.provider "virtualbox" do |v|
+
+    v.name = "APP-NAME-dockerhost"
+    v.memory = 2048
+
+  end
+
+end
+
+config.vm.provision "shell",
+  inline: "mkdir -p /home/rancher/{.composer,.drush}"
+end

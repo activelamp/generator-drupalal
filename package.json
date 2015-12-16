@@ -1,0 +1,24 @@
+{
+  "name": "generator-drupalal",
+  "version": "0.0.1",
+  "description": "Creates a Drupal development environment, ActiveLAMP style!",
+  "files": [
+    "app",
+    "router"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "author": "Tom Friedhof",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^1.1.1",
+    "change-case": "^2.3.0",
+    "fs-extra": "^0.26.2",
+    "glob": "^6.0.1",
+    "path": "^0.12.7",
+    "replace": "^0.3.0",
+    "yeoman-generator": "^0.21.1",
+    "yosay": "^1.1.0"
+  }
+}

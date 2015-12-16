@@ -1,0 +1,6 @@
+source 'http://rubygems.org'
+
+gem 'compass', '~> 1.0.3'
+gem 'sass-globbing', '~> 1.1.1'
+gem "autoprefixer-rails", "~>5.1.0"
+gem 'execjs', '~> 2.6'

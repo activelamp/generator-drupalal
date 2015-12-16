@@ -1,0 +1,10 @@
+.idea
+*.iml
+.vagrant
+docroot/*
+/vendor/
+keys
+_bower_components
+.DS_Store
+.sass-cache
+drupal/profiles/apa_profile/themes/custom/promise/css/*

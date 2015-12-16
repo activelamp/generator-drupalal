@@ -1,0 +1,69 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the standard installation profile.
+ */
+
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
+// use Symfony\Component\Finder\Finder;
+// use Symfony\Component\Yaml\Parser;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ *
+ * @see system_install()
+ */
+function custom_profile_install() {
+  // Allow authenticated users to use shortcuts.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array('access shortcuts'));
+
+  // Populate the default shortcut set.
+  $shortcut = entity_create('shortcut', array(
+    'shortcut_set' => 'default',
+    'title' => t('Add content'),
+    'weight' => -20,
+    'link' => array('uri' => 'internal:/node/add'),
+  ));
+  $shortcut->save();
+
+  $shortcut = entity_create('shortcut', array(
+    'shortcut_set' => 'default',
+    'title' => t('All content'),
+    'weight' => -19,
+    'link' => array('uri' => 'internal:/admin/content'),
+  ));
+  $shortcut->save();
+
+  // Enable the admin theme.
+  \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
+
+
+  // Update UUID's in active config.
+  //_custom_profile_update_config();
+}
+
+
+/**
+ * Updates the active config with UUID's from the sync directory if exists.
+ */
+// function _custom_profile_update_config() {
+//   $finder = new Finder();
+//   $yaml = new Parser();
+//
+//   $finder->files()->in(config_get_config_directory('sync'));
+//   /* @var \Symfony\Component\Finder\SplFileInfo $file */
+//   foreach ($finder as $file) {
+//     $config_name = basename($file->getFilename(), '.yml');
+//     $config_sync = $yaml->parse(file_get_contents($file->getRealpath()));
+//     $config_active = \Drupal::configFactory()->getEditable($config_name);
+//
+//     $active_data = $config_active->getRawData();
+//     if (!empty($active_data) && array_key_exists('uuid', $config_sync)) {
+//       $config_active->set('uuid', $config_sync['uuid'])
+//         ->save();
+//     }
+//   }
+// }
