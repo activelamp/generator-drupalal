@@ -26,7 +26,7 @@ module.exports = generators.Base.extend({
     },
     {
       name: 'profileMachineName',
-      message: 'Would should the profile machine name be?',
+      message: 'What should the profile machine name be?',
       default: function(props) {
         return changeCase.snakeCase(props.profileName)
       }
@@ -66,7 +66,7 @@ module.exports = generators.Base.extend({
       var files = glob.sync(self.templatePath() + '/**/*');
       var drushVersion = "7.1.0";
       var drushCore = "7.x";
-      var drupalCore = "7.41";
+      var drupalCore = "7.42";
 
       files.forEach(function(file) {
         if (fs.lstatSync(file).isDirectory()) {
@@ -132,7 +132,7 @@ module.exports = generators.Base.extend({
       });
 
       // Copy the .gitignore
-      self.fs.copy(self.templatePath('.gitignore'), self.destinationPath('.gitignore'));
+      // self.fs.copy(self.templatePath('.gitignore'), self.destinationPath('.gitignore'));
     }
   },
 
